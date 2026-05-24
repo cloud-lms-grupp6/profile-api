@@ -1,0 +1,15 @@
+C:\Users\Boromir\lms-Profile-Api\Lms.Profile.Application\bin\Debug\net10.0\Lms.Profile.Application.deps.json
+C:\Users\Boromir\lms-Profile-Api\Lms.Profile.Application\bin\Debug\net10.0\Lms.Profile.Application.dll
+C:\Users\Boromir\lms-Profile-Api\Lms.Profile.Application\bin\Debug\net10.0\Lms.Profile.Application.pdb
+C:\Users\Boromir\lms-Profile-Api\Lms.Profile.Application\bin\Debug\net10.0\Lms.Profile.Domain.dll
+C:\Users\Boromir\lms-Profile-Api\Lms.Profile.Application\bin\Debug\net10.0\Lms.Profile.Domain.pdb
+C:\Users\Boromir\lms-Profile-Api\Lms.Profile.Application\obj\Debug\net10.0\Lms.Profile.Application.csproj.AssemblyReference.cache
+C:\Users\Boromir\lms-Profile-Api\Lms.Profile.Application\obj\Debug\net10.0\Lms.Profile.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Boromir\lms-Profile-Api\Lms.Profile.Application\obj\Debug\net10.0\Lms.Profile.Application.AssemblyInfoInputs.cache
+C:\Users\Boromir\lms-Profile-Api\Lms.Profile.Application\obj\Debug\net10.0\Lms.Profile.Application.AssemblyInfo.cs
+C:\Users\Boromir\lms-Profile-Api\Lms.Profile.Application\obj\Debug\net10.0\Lms.Profile.Application.csproj.CoreCompileInputs.cache
+C:\Users\Boromir\lms-Profile-Api\Lms.Profile.Application\obj\Debug\net10.0\Lms.Prof.0DF1476A.Up2Date
+C:\Users\Boromir\lms-Profile-Api\Lms.Profile.Application\obj\Debug\net10.0\Lms.Profile.Application.dll
+C:\Users\Boromir\lms-Profile-Api\Lms.Profile.Application\obj\Debug\net10.0\refint\Lms.Profile.Application.dll
+C:\Users\Boromir\lms-Profile-Api\Lms.Profile.Application\obj\Debug\net10.0\Lms.Profile.Application.pdb
+C:\Users\Boromir\lms-Profile-Api\Lms.Profile.Application\obj\Debug\net10.0\ref\Lms.Profile.Application.dll

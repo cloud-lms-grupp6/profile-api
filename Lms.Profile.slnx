@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Lms.Profile.Api/Lms.Profile.Api.csproj" />
+  <Project Path="Lms.Profile.Application/Lms.Profile.Application.csproj" />
+  <Project Path="Lms.Profile.Domain/Lms.Profile.Domain.csproj" />
+  <Project Path="Lms.Profile.Infrastructure/Lms.Profile.Infrastructure.csproj" />
+  <Project Path="Lms.Profile.Tests/Lms.Profile.Tests.csproj" />
+</Solution>
