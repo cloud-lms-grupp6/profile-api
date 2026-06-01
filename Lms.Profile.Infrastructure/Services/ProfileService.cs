@@ -15,17 +15,36 @@ public class ProfileService : IProfileService
         _context = context;
     }
 
-    public async Task<IEnumerable<UserProfile>> GetAllAsync()
+    public async Task<IEnumerable<ProfileResponse>> GetAllAsync()
     {
-        return await _context.UserProfiles.ToListAsync();
+        return await _context.UserProfiles
+            .Select(p => new ProfileResponse
+            {
+                Id = p.Id,
+                UserId = p.UserId,
+                FirstName = p.FirstName,
+                LastName = p.LastName,
+                Email = p.Email
+            })
+            .ToListAsync();
     }
 
-    public async Task<UserProfile?> GetByIdAsync(Guid id)
+    public async Task<ProfileResponse?> GetByIdAsync(Guid id)
     {
-        return await _context.UserProfiles.FindAsync(id);
+        return await _context.UserProfiles
+            .Where(p => p.Id == id)
+            .Select(p => new ProfileResponse
+            {
+                Id = p.Id,
+                UserId = p.UserId,
+                FirstName = p.FirstName,
+                LastName = p.LastName,
+                Email = p.Email
+            })
+            .FirstOrDefaultAsync();
     }
 
-    public async Task<UserProfile> CreateAsync(CreateProfileRequest request)
+    public async Task<ProfileResponse> CreateAsync(CreateProfileRequest request)
     {
         var profile = new UserProfile
         {
@@ -38,7 +57,14 @@ public class ProfileService : IProfileService
         _context.UserProfiles.Add(profile);
         await _context.SaveChangesAsync();
 
-        return profile;
+        return new ProfileResponse
+        {
+            Id = profile.Id,
+            UserId = profile.UserId,
+            FirstName = profile.FirstName,
+            LastName = profile.LastName,
+            Email = profile.Email
+        };
     }
 
     public async Task<bool> UpdateAsync(Guid id, UpdateProfileRequest request)
