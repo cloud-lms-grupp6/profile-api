@@ -2,6 +2,7 @@ using Lms.Profile.Domain.Entities;
 using Lms.Profile.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Lms.Profile.Application.DTOs;
 
 namespace Lms.Profile.Api.Controllers;
 
@@ -34,30 +35,38 @@ public class ProfilesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<UserProfile>> Create(UserProfile profile)
+public async Task<ActionResult<UserProfile>> Create(CreateProfileRequest request)
+{
+    var profile = new UserProfile
     {
-        _context.UserProfiles.Add(profile);
-        await _context.SaveChangesAsync();
+        UserId = request.UserId,
+        FirstName = request.FirstName,
+        LastName = request.LastName,
+        Email = request.Email
+    };
 
-        return CreatedAtAction(nameof(GetById), new { id = profile.Id }, profile);
-    }
+    _context.UserProfiles.Add(profile);
+    await _context.SaveChangesAsync();
+
+    return CreatedAtAction(nameof(GetById), new { id = profile.Id }, profile);
+}
 
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> Update(Guid id, UserProfile updatedProfile)
-    {
-        var profile = await _context.UserProfiles.FindAsync(id);
+public async Task<IActionResult> Update(Guid id, UpdateProfileRequest request)
+{
+    var profile = await _context.UserProfiles.FindAsync(id);
 
-        if (profile is null)
-            return NotFound();
+    if (profile is null)
+        return NotFound();
 
-        profile.FirstName = updatedProfile.FirstName;
-        profile.LastName = updatedProfile.LastName;
-        profile.Email = updatedProfile.Email;
+    profile.FirstName = request.FirstName;
+    profile.LastName = request.LastName;
+    profile.Email = request.Email;
 
-        await _context.SaveChangesAsync();
+    await _context.SaveChangesAsync();
 
-        return NoContent();
-    }
+    return NoContent();
+}
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
