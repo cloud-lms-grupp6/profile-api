@@ -1,8 +1,7 @@
-using Lms.Profile.Domain.Entities;
-using Lms.Profile.Infrastructure.Data;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Lms.Profile.Application.DTOs;
+using Lms.Profile.Application.Interfaces;
+using Lms.Profile.Domain.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Lms.Profile.Api.Controllers;
 
@@ -10,74 +9,57 @@ namespace Lms.Profile.Api.Controllers;
 [Route("api/[controller]")]
 public class ProfilesController : ControllerBase
 {
-    private readonly ProfileDbContext _context;
+    private readonly IProfileService _profileService;
 
-    public ProfilesController(ProfileDbContext context)
+    public ProfilesController(IProfileService profileService)
     {
-        _context = context;
+        _profileService = profileService;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<UserProfile>>> GetAll()
     {
-        return await _context.UserProfiles.ToListAsync();
+        var profiles = await _profileService.GetAllAsync();
+        return Ok(profiles);
     }
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<UserProfile>> GetById(Guid id)
     {
-        var profile = await _context.UserProfiles.FindAsync(id);
+        var profile = await _profileService.GetByIdAsync(id);
 
         if (profile is null)
             return NotFound();
 
-        return profile;
+        return Ok(profile);
     }
 
     [HttpPost]
-public async Task<ActionResult<UserProfile>> Create(CreateProfileRequest request)
-{
-    var profile = new UserProfile
+    public async Task<ActionResult<UserProfile>> Create(CreateProfileRequest request)
     {
-        UserId = request.UserId,
-        FirstName = request.FirstName,
-        LastName = request.LastName,
-        Email = request.Email
-    };
+        var profile = await _profileService.CreateAsync(request);
 
-    _context.UserProfiles.Add(profile);
-    await _context.SaveChangesAsync();
-
-    return CreatedAtAction(nameof(GetById), new { id = profile.Id }, profile);
-}
+        return CreatedAtAction(nameof(GetById), new { id = profile.Id }, profile);
+    }
 
     [HttpPut("{id:guid}")]
-public async Task<IActionResult> Update(Guid id, UpdateProfileRequest request)
-{
-    var profile = await _context.UserProfiles.FindAsync(id);
+    public async Task<IActionResult> Update(Guid id, UpdateProfileRequest request)
+    {
+        var updated = await _profileService.UpdateAsync(id, request);
 
-    if (profile is null)
-        return NotFound();
+        if (!updated)
+            return NotFound();
 
-    profile.FirstName = request.FirstName;
-    profile.LastName = request.LastName;
-    profile.Email = request.Email;
-
-    await _context.SaveChangesAsync();
-
-    return NoContent();
-}
+        return NoContent();
+    }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var profile = await _context.UserProfiles.FindAsync(id);
+        var deleted = await _profileService.DeleteAsync(id);
 
-        if (profile is null)
+        if (!deleted)
             return NotFound();
-
-        _context.UserProfiles.Remove(profile);
-        await _context.SaveChangesAsync();
 
         return NoContent();
     }
