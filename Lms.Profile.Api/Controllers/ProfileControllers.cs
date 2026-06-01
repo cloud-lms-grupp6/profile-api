@@ -1,10 +1,11 @@
 using Lms.Profile.Application.DTOs;
 using Lms.Profile.Application.Interfaces;
-using Lms.Profile.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lms.Profile.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class ProfilesController : ControllerBase
@@ -17,14 +18,14 @@ public class ProfilesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserProfile>>> GetAll()
+    public async Task<ActionResult<IEnumerable<ProfileResponse>>> GetAll()
     {
         var profiles = await _profileService.GetAllAsync();
         return Ok(profiles);
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<UserProfile>> GetById(Guid id)
+    public async Task<ActionResult<ProfileResponse>> GetById(Guid id)
     {
         var profile = await _profileService.GetByIdAsync(id);
 
@@ -35,7 +36,7 @@ public class ProfilesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<UserProfile>> Create(CreateProfileRequest request)
+    public async Task<ActionResult<ProfileResponse>> Create(CreateProfileRequest request)
     {
         var profile = await _profileService.CreateAsync(request);
 
