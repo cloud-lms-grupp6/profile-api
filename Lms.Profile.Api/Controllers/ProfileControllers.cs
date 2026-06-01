@@ -41,4 +41,35 @@ public class ProfilesController : ControllerBase
 
         return CreatedAtAction(nameof(GetById), new { id = profile.Id }, profile);
     }
+
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> Update(Guid id, UserProfile updatedProfile)
+    {
+        var profile = await _context.UserProfiles.FindAsync(id);
+
+        if (profile is null)
+            return NotFound();
+
+        profile.FirstName = updatedProfile.FirstName;
+        profile.LastName = updatedProfile.LastName;
+        profile.Email = updatedProfile.Email;
+
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var profile = await _context.UserProfiles.FindAsync(id);
+
+        if (profile is null)
+            return NotFound();
+
+        _context.UserProfiles.Remove(profile);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }
