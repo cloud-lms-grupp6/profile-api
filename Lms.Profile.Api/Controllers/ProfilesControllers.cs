@@ -102,6 +102,7 @@ public class ProfilesController : ControllerBase
     {
         return User.FindFirstValue(ClaimTypes.NameIdentifier)
             ?? User.FindFirstValue("sub")
+            ?? User.FindFirstValue("id")
             ?? User.FindFirstValue("userId");
     }
 }
