@@ -24,7 +24,8 @@ public class ProfileService : IProfileService
                 UserId = p.UserId,
                 FirstName = p.FirstName,
                 LastName = p.LastName,
-                Email = p.Email
+                Email = p.Email,
+                ProfileImageUrl = p.ProfileImageUrl
             })
             .ToListAsync();
     }
@@ -39,7 +40,8 @@ public class ProfileService : IProfileService
                 UserId = p.UserId,
                 FirstName = p.FirstName,
                 LastName = p.LastName,
-                Email = p.Email
+                Email = p.Email,
+                ProfileImageUrl = p.ProfileImageUrl
             })
             .FirstOrDefaultAsync();
     }
@@ -54,7 +56,22 @@ public class ProfileService : IProfileService
                 UserId = p.UserId,
                 FirstName = p.FirstName,
                 LastName = p.LastName,
-                Email = p.Email
+                Email = p.Email,
+                ProfileImageUrl = p.ProfileImageUrl
+            })
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<PublicProfileResponse?> GetPublicProfileAsync(string userId)
+    {
+        return await _context.UserProfiles
+            .Where(p => p.UserId == userId)
+            .Select(p => new PublicProfileResponse
+            {
+                UserId = p.UserId,
+                FirstName = p.FirstName,
+                LastName = p.LastName,
+                ProfileImageUrl = p.ProfileImageUrl
             })
             .FirstOrDefaultAsync();
     }
@@ -78,7 +95,8 @@ public class ProfileService : IProfileService
             UserId = profile.UserId,
             FirstName = profile.FirstName,
             LastName = profile.LastName,
-            Email = profile.Email
+            Email = profile.Email,
+            ProfileImageUrl = profile.ProfileImageUrl
         };
     }
 
@@ -109,6 +127,23 @@ public class ProfileService : IProfileService
         profile.FirstName = request.FirstName;
         profile.LastName = request.LastName;
         profile.Email = request.Email;
+
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<bool> UpdateProfileImageByUserIdAsync(
+        string userId,
+        UpdateProfileImageRequest request)
+    {
+        var profile = await _context.UserProfiles
+            .FirstOrDefaultAsync(p => p.UserId == userId);
+
+        if (profile is null)
+            return false;
+
+        profile.ProfileImageUrl = request.ProfileImageUrl;
 
         await _context.SaveChangesAsync();
 

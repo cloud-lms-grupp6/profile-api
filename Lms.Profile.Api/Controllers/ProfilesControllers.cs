@@ -57,6 +57,22 @@ public class ProfilesController : ControllerBase
         return NoContent();
     }
 
+    [HttpPut("me/profile-image")]
+    public async Task<IActionResult> UpdateMyProfileImage(UpdateProfileImageRequest request)
+    {
+        var userId = GetUserIdFromToken();
+
+        if (string.IsNullOrWhiteSpace(userId))
+            return Unauthorized();
+
+        var updated = await _profileService.UpdateProfileImageByUserIdAsync(userId, request);
+
+        if (!updated)
+            return NotFound();
+
+        return NoContent();
+    }
+
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ProfileResponse>> GetById(Guid id)
     {
