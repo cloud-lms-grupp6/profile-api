@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Lms.Profile.Application.DTOs;
 using Lms.Profile.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +23,38 @@ public class ProfilesController : ControllerBase
     {
         var profiles = await _profileService.GetAllAsync();
         return Ok(profiles);
+    }
+
+    [HttpGet("me")]
+    public async Task<ActionResult<ProfileResponse>> GetMyProfile()
+    {
+        var userId = GetUserIdFromToken();
+
+        if (string.IsNullOrWhiteSpace(userId))
+            return Unauthorized();
+
+        var profile = await _profileService.GetByUserIdAsync(userId);
+
+        if (profile is null)
+            return NotFound();
+
+        return Ok(profile);
+    }
+
+    [HttpPut("me")]
+    public async Task<IActionResult> UpdateMyProfile(UpdateProfileRequest request)
+    {
+        var userId = GetUserIdFromToken();
+
+        if (string.IsNullOrWhiteSpace(userId))
+            return Unauthorized();
+
+        var updated = await _profileService.UpdateByUserIdAsync(userId, request);
+
+        if (!updated)
+            return NotFound();
+
+        return NoContent();
     }
 
     [HttpGet("{id:guid}")]
@@ -63,5 +96,12 @@ public class ProfilesController : ControllerBase
             return NotFound();
 
         return NoContent();
+    }
+
+    private string? GetUserIdFromToken()
+    {
+        return User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? User.FindFirstValue("sub")
+            ?? User.FindFirstValue("userId");
     }
 }

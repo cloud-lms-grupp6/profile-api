@@ -44,6 +44,21 @@ public class ProfileService : IProfileService
             .FirstOrDefaultAsync();
     }
 
+    public async Task<ProfileResponse?> GetByUserIdAsync(string userId)
+    {
+        return await _context.UserProfiles
+            .Where(p => p.UserId == userId)
+            .Select(p => new ProfileResponse
+            {
+                Id = p.Id,
+                UserId = p.UserId,
+                FirstName = p.FirstName,
+                LastName = p.LastName,
+                Email = p.Email
+            })
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<ProfileResponse> CreateAsync(CreateProfileRequest request)
     {
         var profile = new UserProfile
@@ -70,6 +85,23 @@ public class ProfileService : IProfileService
     public async Task<bool> UpdateAsync(Guid id, UpdateProfileRequest request)
     {
         var profile = await _context.UserProfiles.FindAsync(id);
+
+        if (profile is null)
+            return false;
+
+        profile.FirstName = request.FirstName;
+        profile.LastName = request.LastName;
+        profile.Email = request.Email;
+
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<bool> UpdateByUserIdAsync(string userId, UpdateProfileRequest request)
+    {
+        var profile = await _context.UserProfiles
+            .FirstOrDefaultAsync(p => p.UserId == userId);
 
         if (profile is null)
             return false;
