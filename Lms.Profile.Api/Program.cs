@@ -1,3 +1,4 @@
+using Azure.Identity;
 using System.Text;
 using Lms.Profile.Application.Interfaces;
 using Lms.Profile.Infrastructure.Data;
@@ -9,6 +10,10 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddAzureKeyVault(
+    new Uri("https://lms-kv-grupp6.vault.azure.net/"),
+    new DefaultAzureCredential());
+
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<ProfileDbContext>(options =>
@@ -16,7 +21,9 @@ builder.Services.AddDbContext<ProfileDbContext>(options =>
 
 builder.Services.AddScoped<IProfileService, ProfileService>();
 
-var jwtKey = builder.Configuration["Jwt:Key"] ?? "super-secret-development-key-change-this";
+var jwtKey = builder.Configuration["Jwt:SigningKey"] 
+    ?? "super-secret-development-key-change-this";
+
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "Lms.Auth.Api";
 var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "Lms.Profile.Api";
 

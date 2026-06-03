@@ -41,6 +41,18 @@ public class ProfilesController : ControllerBase
         return Ok(profile);
     }
 
+    [AllowAnonymous]
+    [HttpGet("public/{userId}")]
+    public async Task<ActionResult<PublicProfileResponse>> GetPublicProfile(string userId)
+    {
+        var profile = await _profileService.GetPublicProfileAsync(userId);
+
+        if (profile is null)
+            return NotFound();
+
+        return Ok(profile);
+    }
+
     [HttpPut("me")]
     public async Task<IActionResult> UpdateMyProfile(UpdateProfileRequest request)
     {
