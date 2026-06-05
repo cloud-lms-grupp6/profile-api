@@ -109,7 +109,6 @@ public class ProfilesController : ControllerBase
     }
 
     // Skapar en ny profil i databasen.
-    [AllowAnonymous]
 [HttpPost]
 public async Task<ActionResult<ProfileResponse>> Create(CreateProfileRequest request)
 {
