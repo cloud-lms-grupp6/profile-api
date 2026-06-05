@@ -109,13 +109,14 @@ public class ProfilesController : ControllerBase
     }
 
     // Skapar en ny profil i databasen.
-    [HttpPost]
-    public async Task<ActionResult<ProfileResponse>> Create(CreateProfileRequest request)
-    {
-        var profile = await _profileService.CreateAsync(request);
+    [AllowAnonymous]
+[HttpPost]
+public async Task<ActionResult<ProfileResponse>> Create(CreateProfileRequest request)
+{
+    var profile = await _profileService.CreateAsync(request);
 
-        return CreatedAtAction(nameof(GetById), new { id = profile.Id }, profile);
-    }
+    return CreatedAtAction(nameof(GetById), new { id = profile.Id }, profile);
+}
 
     // Uppdaterar en profil baserat på profilens ID.
     [HttpPut("{id:guid}")]

@@ -24,6 +24,17 @@ builder.Configuration.AddAzureKeyVault(
 // Aktiverar controllers så att API-endpoints kan användas.
 builder.Services.AddControllers();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 // Kopplar Profile API till SQL Server via Entity Framework Core.
 builder.Services.AddDbContext<ProfileDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -37,8 +48,8 @@ builder.Services.AddScoped<IProfileService, ProfileService>();
 var jwtKey = builder.Configuration["Jwt:SigningKey"]
     ?? "super-secret-development-key-change-this";
 
-var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "Lms.Auth.Api";
-var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "Lms.Profile.Api";
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "auth-api";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "lms";
 
 // Konfigurerar JWT Bearer authentication.
 // Profile API accepterar bara requests med giltig token.
@@ -54,7 +65,7 @@ builder.Services
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtIssuer,
             ValidAudience = jwtAudience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+            IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(jwtKey))
         };
     });
 
@@ -72,6 +83,8 @@ app.MapOpenApi();
 app.MapScalarApiReference();
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowFrontend");
 
 // Authentication måste köras före Authorization.
 app.UseAuthentication();
