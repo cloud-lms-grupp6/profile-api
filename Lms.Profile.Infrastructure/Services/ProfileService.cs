@@ -4,6 +4,12 @@ using Lms.Profile.Domain.Entities;
 using Lms.Profile.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
+// ProfileService innehåller affärslogiken för användarprofiler.
+// Här hanteras CRUD-operationer och uppdatering av profilbild.
+//
+// AI användes som stöd för att strukturera service-lagret och EF Core-frågor.
+// Koden anpassades därefter manuellt efter projektets DTO:er, databasmodell och krav.
+
 namespace Lms.Profile.Infrastructure.Services;
 
 public class ProfileService : IProfileService
@@ -15,6 +21,7 @@ public class ProfileService : IProfileService
         _context = context;
     }
 
+    // Hämtar alla profiler från databasen och mappar dem till ProfileResponse.
     public async Task<IEnumerable<ProfileResponse>> GetAllAsync()
     {
         return await _context.UserProfiles
@@ -30,6 +37,7 @@ public class ProfileService : IProfileService
             .ToListAsync();
     }
 
+    // Hämtar en specifik profil baserat på profilens unika ID.
     public async Task<ProfileResponse?> GetByIdAsync(Guid id)
     {
         return await _context.UserProfiles
@@ -46,6 +54,8 @@ public class ProfileService : IProfileService
             .FirstOrDefaultAsync();
     }
 
+    // Hämtar en profil baserat på användarens UserId.
+    // Detta används exempelvis när den inloggade användaren ska hämta sin egen profil.
     public async Task<ProfileResponse?> GetByUserIdAsync(string userId)
     {
         return await _context.UserProfiles
@@ -62,6 +72,8 @@ public class ProfileService : IProfileService
             .FirstOrDefaultAsync();
     }
 
+    // Returnerar en publik version av profilen.
+    // Här skickas inte all information tillbaka, utan bara det som får visas offentligt.
     public async Task<PublicProfileResponse?> GetPublicProfileAsync(string userId)
     {
         return await _context.UserProfiles
@@ -76,6 +88,7 @@ public class ProfileService : IProfileService
             .FirstOrDefaultAsync();
     }
 
+    // Skapar en ny profil från inkommande CreateProfileRequest.
     public async Task<ProfileResponse> CreateAsync(CreateProfileRequest request)
     {
         var profile = new UserProfile
@@ -89,6 +102,7 @@ public class ProfileService : IProfileService
         _context.UserProfiles.Add(profile);
         await _context.SaveChangesAsync();
 
+        // Returnerar den skapade profilen som DTO istället för entity.
         return new ProfileResponse
         {
             Id = profile.Id,
@@ -100,6 +114,7 @@ public class ProfileService : IProfileService
         };
     }
 
+    // Uppdaterar profilinformation baserat på profilens ID.
     public async Task<bool> UpdateAsync(Guid id, UpdateProfileRequest request)
     {
         var profile = await _context.UserProfiles.FindAsync(id);
@@ -116,6 +131,8 @@ public class ProfileService : IProfileService
         return true;
     }
 
+    // Uppdaterar profilinformation baserat på UserId.
+    // Detta är användbart för /me-endpoints där användaren uppdaterar sin egen profil.
     public async Task<bool> UpdateByUserIdAsync(string userId, UpdateProfileRequest request)
     {
         var profile = await _context.UserProfiles
@@ -133,6 +150,8 @@ public class ProfileService : IProfileService
         return true;
     }
 
+    // Uppdaterar endast profilbildens URL för en användare.
+    // Denna metod används när frontend skickar en ny profilbild eller bild-URL.
     public async Task<bool> UpdateProfileImageByUserIdAsync(
         string userId,
         UpdateProfileImageRequest request)
@@ -150,6 +169,7 @@ public class ProfileService : IProfileService
         return true;
     }
 
+    // Tar bort en profil från databasen baserat på profilens ID.
     public async Task<bool> DeleteAsync(Guid id)
     {
         var profile = await _context.UserProfiles.FindAsync(id);
